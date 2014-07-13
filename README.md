@@ -9,8 +9,9 @@ Author: Kazuki Komatsu
 使い方は、`example/test.cpp`を見てください。
 
 + requirements
-    - C++11(14)が使えるC++コンパイラ
+    - C++11が使えるC++コンパイラ
     - boost::optionalが使えるなるべく新しいboost
+    - OpenCV
     - cURL
 
 ### boost導入方法
@@ -29,3 +30,8 @@ Windowsでも結構簡単です。
 
 uURLのHTTP GETの結果を受け取るために、落としてきた画像を一旦ディスク上に展開しているので、このライブラリはスレッドセーフではありません。
 もし、マルチスレッド化したいという要望があるのであれば、スレッドセーフ化を検討します。
+
+
+### 動作確認環境
+
+Linux mint (g++ 4.8.2)

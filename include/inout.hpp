@@ -63,6 +63,8 @@ class Pixel
     uint8_t g() const { return _v[1]; }
     uint8_t r() const { return _v[2]; }
 
+    cv::Vec3b vec() const { return _v; }
+
   private:
     cv::Vec3b _v;
 };
@@ -94,8 +96,8 @@ class ProblemImpl
 class ElementImage
 {
   public:
-    ElementImage(std::shared_ptr<ProblemImpl> const & m, std::size_t i, std::size_t j, std::size_t div_x, std::size_t div_y)
-    : _master(m), _pos_x(i), _pos_y(j), _div_x(div_x), _div_y(div_y)
+    ElementImage(std::shared_ptr<ProblemImpl> const & m, std::size_t r, std::size_t c, std::size_t div_x, std::size_t div_y)
+    : _master(m), _pos_x(c), _pos_y(r), _div_x(div_x), _div_y(div_y)
     {}
 
 
@@ -234,9 +236,9 @@ class Problem
 
 
     /// インデックス配列におけるi行j列の断片を表すオブジェクトを返します
-    ElementImage get_element(std::size_t i, std::size_t j) const
+    ElementImage get_element(std::size_t r, std::size_t c) const
     {
-        ElementImage dst(_master, i, j, _div_x, _div_y);
+        ElementImage dst(_master, r, c, _div_x, _div_y);
         return dst;
     }
 

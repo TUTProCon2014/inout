@@ -54,7 +54,9 @@ constexpr bool is_image(...)
 //}
 
 
-// この実装はもうちょっと待って
+
+/** pixelを表す型
+*/
 class Pixel
 {
   public:
@@ -71,7 +73,7 @@ class Pixel
 };
 
 
-// この実装はもうちょっと待って
+// 
 class ProblemImpl
 {
   public:
@@ -92,7 +94,6 @@ class ProblemImpl
 
 /**
 全体画像の分割画像を表すクラスです。
-このクラスのコンストラクタは、
 */
 class ElementImage
 {
@@ -132,9 +133,13 @@ class ElementImage
 };
 
 
+/** 問題の各種定数と画像を管理する型です。
+*/
 class Problem
 {
   public:
+    /**
+    */
     static
     bool download_ppm(std::string const & url, std::string const & save_file)
     {
@@ -147,6 +152,13 @@ class Problem
     }
 
 
+    /** ローカルに保存してあるppmファイルを読み込みます。
+    * arguments:
+        * ppm_file_path     = ローカルに保存したppmファイルへのパス
+    
+    * return:
+        読み込みに成功した場合はオブジェクトが返りますが、失敗した場合にはnull_opt()が返ります。
+    */
     static
     boost::optional<Problem> get(std::string const & ppm_file_path)
     {
@@ -189,8 +201,12 @@ class Problem
 
 
     /** サーバーから送られてきた.ppmファイルの情報からオブジェクトを構築します
-    引数:
-        problem_data    = サーバーから送られてきた.ppmファイルへのパス
+    * arguments:
+        * problem_data    = サーバーから送られてきた.ppmファイルへのパス
+
+
+    * return:
+        読み込みに成功した場合はオブジェクトが返りますが、失敗した場合にはnull_opt()が返ります。
     */
     static
     boost::optional<Problem> get(std::string const & server_address, std::string const & problem_number)
@@ -204,6 +220,13 @@ class Problem
     }
 
 
+    /** テストサーバー(練習場)から問題番号idな画像を落とし、Problemオブジェクトを構築します。
+    * arguments:
+        * id    = 問題番号
+
+    * return:
+        読み込みに成功した場合はオブジェクトが返りますが、失敗した場合にはnull_opt()が返ります
+    */
     static
     boost::optional<Problem> get_from_test_server(uint id)
     {
@@ -301,6 +324,8 @@ bool curl_post(std::string const & url, std::vector<std::array<std::string, 2>> 
 }
 
 
+/** 解答をテストサーバー(練習場)へ提出します。
+*/
 bool send_result_to_test_server(int id, std::string const & username, std::string const & passwd, std::string const & answer)
 {
     std::vector<std::array<std::string, 2>> args;
@@ -312,8 +337,7 @@ bool send_result_to_test_server(int id, std::string const & username, std::strin
 }
 
 
-/**
-
+/** 提出状況
 */
 enum class SendStatus
 {
@@ -323,8 +347,7 @@ enum class SendStatus
 };
 
 
-/**
-
+/** 解答をサーバーへ提出します
 */
 SendStatus send_result(std::string const & server_address,
                        std::string const & team_token,

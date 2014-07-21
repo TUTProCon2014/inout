@@ -12,6 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include "constants.hpp"
 
 
 namespace inout{
@@ -293,8 +294,7 @@ bool curl_post(std::string const & url, std::vector<std::array<std::string, 2>> 
         command += " -d " + s[0] + "=" + url_encode(s[1]);
 
     // std::cout << "post: " << command + " " + url << std::endl;
-
-    if(system((command + " " + url + " > /dev/null").c_str()) == 0)
+    if(system((command + " " + url + (utils::buildTarget == utils::Target::Win32 ? " > nul" : " > /dev/null")).c_str()) == 0)
         return true;
     else
         return false;

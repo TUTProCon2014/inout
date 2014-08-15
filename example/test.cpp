@@ -31,20 +31,21 @@ template <typename T>
 auto vec_total(T const & vec, std::size_t size)
     -> typename std::remove_const<typename std::remove_reference<decltype(vec[size])>::type>::type
 {
-    typename std::remove_const<typename std::remove_reference<decltype(vec[0])>::type>::type sum = 0;
+    decltype(vec_total(vec, size)) sum = 0;
 
     for(std::size_t i = 1; i < size; ++i)
         sum += std::abs(vec[i]);
+
     return sum;
 }
 
 
 /**
-ある画像img1に対して、方角directionに画像img2がどの程度相関があるかを返しますｔ
+ある画像img1に対して、方角directionに画像img2がどの程度相関があるかを返します
 */
-template <typename T, typename U, typename std::enable_if<is_image((T*)nullptr) && is_image((U*)nullptr)>::type *& = enabler_ptr>
+template <typename T, typename U,
+    TEMPLATE_CONSTRAINTS(is_image<T>() && is_image<U>())>   // T, Uともに画像であるという制約
 double diff_connection(T const & img1, U const & img2, Direction direction)
-
 {
     double sum = 0;
 
@@ -98,10 +99,37 @@ double diff_connection(T const & img1, U const & img2, Direction direction)
 }
 
 
+/// ditto
+template <typename T, typename U,
+    TEMPLATE_CONSTRAINTS(!is_image<T>() || !is_image<U>())>
+double diff_connection(T const & img1, U const & img2, Direction direction)
+{
+    static_assert(is_image<T>(), "1st argument is not a image type value");
+    static_assert(is_image<U>(), "2nd argument is not a image type value");
+
+    return 0;
+}
+
 
 int main()
 {
     auto p_opt = Problem::get_from_test_server(1);
+
+    static_assert(is_image<Problem>(), "NG: Problem");
+    static_assert(is_image<Problem&>(), "NG: Problem&");
+    static_assert(is_image<Problem const &>(), "NG: Problem const &");
+    static_assert(!is_image<Problem*>(), "NG: Problem* is not a member of image type");
+    static_assert(is_image<ElementImage>(), "NG: ElementImage");
+    static_assert(is_image<ElementImage&>(), "NG: ElementImage&");
+    static_assert(is_image<ElementImage const &>(), "NG: ElementImage const &");
+    static_assert(!is_image<ElementImage*>(), "NG: ElementImage* is not a member of image type");
+    static_assert(!is_image<int>(), "NG: int is not a member of image type");
+    static_assert(!is_image<double>(), "NG:  double is not a member of image type");
+    static_assert(!is_image<std::string>(), "NG:  double is not a member of image type");
+    static_assert(!is_image<std::vector<int>>(), "NG:  double is not a member of image type");
+
+    static_assert(!is_image<decltype(p_opt)>(), "NG: decltype(p_opt) is not a member of image type");
+    static_assert(is_image<decltype(*p_opt)>(), "NG: decltype(*p_opt)");
 
     if(p_opt){
         const Problem& p = *p_opt;
@@ -126,6 +154,7 @@ int main()
                         continue;
 
                     double v = diff_connection(p.get_element(2, 1), p.get_element(r, c), static_cast<Direction>(i));
+                    // auto vv = diff_connection(1, 1, static_cast<Direction>(i));  // NG
                     m = std::min(m, v);
 
                     if(m == v){

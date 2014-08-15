@@ -14,32 +14,39 @@
 #include <iomanip>
 #include "constants.hpp"
 
+#define TEMPLATE_CONSTRAINTS(b) typename std::enable_if<(b)>::type *& = enabler_ptr
 
 namespace inout{
 extern void* enabler_ptr;
 
-
-/// 型Tが、Image型かどうかを判定します
+// 型Tが、Image型かどうかを判定します
 // SFINAE
 template<typename T>
-constexpr auto is_image(T const * p)
+constexpr auto is_image_impl(T* p)
     -> decltype((p->height(), p->width(), p->get_pixel(0u, 0u), true))
 {
     return true;
 }
 
 
-/// ditto
+// ditto
 // SFINAE
-template<typename T>
-constexpr bool is_image(...)
+constexpr bool is_image_impl(...)
 {
     return false;
 }
 
 
+/// 型Tが、Image型かどうかを判定します
+template <typename T>
+constexpr bool is_image()
+{
+    return is_image_impl(static_cast<typename std::remove_reference<T>::type*>(nullptr));
+}
+
+
 //// 関数の引数でImageType型を取得したい場合はこのようにする
-//template <typename ImageType, typename std::enable_if<is_image<ImageType>((T*)nullptr)>::type *& = enabler>
+//template <typename ImageType, TEMPLATE_CONSTRAINTS(is_image<ImageType>())>
 //void foo(ImageType const & image)
 //{
 //    ....

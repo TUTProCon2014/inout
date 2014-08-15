@@ -11,8 +11,11 @@
 #include <boost/throw_exception.hpp>
 #include <limits>
 #include <type_traits>
+#include "../../utils/include/template.hpp"
+#include "../../utils/include/types.hpp"
 
-using namespace inout;
+using namespace procon::utils;
+using namespace procon::inout;
 
 
 class ImageException
@@ -20,11 +23,6 @@ class ImageException
       public std::exception{};
 
 typedef boost::error_info<struct err_info, std::string> ImageAddInfo;
-
-
-enum class Direction{
-    right, up, left, down
-};
 
 
 template <typename T>
@@ -44,7 +42,7 @@ auto vec_total(T const & vec, std::size_t size)
 ある画像img1に対して、方角directionに画像img2がどの程度相関があるかを返します
 */
 template <typename T, typename U,
-    TEMPLATE_CONSTRAINTS(is_image<T>() && is_image<U>())>   // T, Uともに画像であるという制約
+    PROCON_TEMPLATE_CONSTRAINTS(is_image<T>() && is_image<U>())>   // T, Uともに画像であるという制約
 double diff_connection(T const & img1, U const & img2, Direction direction)
 {
     double sum = 0;
@@ -101,7 +99,7 @@ double diff_connection(T const & img1, U const & img2, Direction direction)
 
 /// ditto
 template <typename T, typename U,
-    TEMPLATE_CONSTRAINTS(!is_image<T>() || !is_image<U>())>
+    PROCON_TEMPLATE_CONSTRAINTS(!is_image<T>() || !is_image<U>())>
 double diff_connection(T const & img1, U const & img2, Direction direction)
 {
     static_assert(is_image<T>(), "1st argument is not a image type value");
@@ -113,7 +111,7 @@ double diff_connection(T const & img1, U const & img2, Direction direction)
 
 int main()
 {
-    auto p_opt = Problem::get_from_test_server(1);
+    auto p_opt = get_problem_from_test_server(1);
 
     static_assert(is_image<Problem>(), "NG: Problem");
     static_assert(is_image<Problem&>(), "NG: Problem&");

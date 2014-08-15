@@ -166,16 +166,16 @@ class Problem
 
         cv::Mat img = cv::imread(ppm_file_path);
         if(img.empty()){
-            std::cout << "can't open img.ppm" << std::endl;
+            std::cout << "can't open " << ppm_file_path << std::endl;
             return null_opt();
         }
 
         Problem pb;
         pb._master = std::make_shared<ProblemImpl>(img);
 
-        std::ifstream file("img.ppm");
+        std::ifstream file(ppm_file_path);
         if(file.fail()){
-            std::cout << "can't open img.ppm" << std::endl;
+            std::cout << "can't open " << ppm_file_path << std::endl;
             return null_opt();
         }
 
@@ -211,10 +211,11 @@ class Problem
     static
     boost::optional<Problem> get(std::string const & server_address, std::string const & problem_number)
     {
-        auto url = "http://" + server_address + "/problem/prob" + problem_number + ".ppm";
+        const auto url = "http://" + server_address + "/problem/prob" + problem_number + ".ppm",
+                   ppmFileName = "img" + problem_number +  ".ppm";
 
-        if(download_ppm(url, "img.ppm"))
-            return get("img.ppm");
+        if(download_ppm(url, ppmFileName))
+            return get(ppmFileName);
         else
             return boost::optional<Problem>(boost::none);
     }
@@ -230,10 +231,12 @@ class Problem
     static
     boost::optional<Problem> get_from_test_server(uint id)
     {
-        auto url = "http://procon2014-practice.oknct-ict.org/problem/ppm/" + std::to_string(id);
+        const auto idstr = std::to_string(id);
+        const auto url = "http://procon2014-practice.oknct-ict.org/problem/ppm/" + idstr,
+                   ppmFileName = "img" + idstr + ".ppm";
 
-        if(download_ppm(url, "img.ppm"))
-            return get("img.ppm");
+        if(download_ppm(url, ppmFileName))
+            return get(ppmFileName);
         else
             return boost::optional<Problem>(boost::none);
     }

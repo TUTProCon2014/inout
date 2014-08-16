@@ -12,7 +12,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include "constants.hpp"
+#include "../../utils/include/constants.hpp"
 #include "../../utils/include/image.hpp"
 #include "../../utils/include/constants.hpp"
 

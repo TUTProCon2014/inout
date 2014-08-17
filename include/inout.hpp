@@ -12,9 +12,11 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <vector>
+#include <array>
+#include <string>
 #include "../../utils/include/constants.hpp"
 #include "../../utils/include/image.hpp"
-#include "../../utils/include/constants.hpp"
 
 namespace procon{ namespace inout {
 
@@ -55,7 +57,7 @@ bool curl_post(std::string const & url, std::vector<std::array<std::string, 2>> 
         command += " -d " + s[0] + "=" + url_encode(s[1]);
 
     // std::cout << "post: " << command + " " + url << std::endl;
-    if(std::system((command + " " + url + (utils::buildTarget == utils::Target::Win32 ? " > nul" : " > /dev/null")).c_str()) == 0)
+    if(std::system((command + " " + url + (utils::buildTarget == utils::Target::Windows ? " > nul" : " > /dev/null")).c_str()) == 0)
         return true;
     else
         return false;
@@ -89,7 +91,7 @@ boost::optional<utils::Problem> get_problem(std::string const & server_address, 
 * return:
     読み込みに成功した場合はオブジェクトが返りますが、失敗した場合にはnull_opt()が返ります
 */
-boost::optional<utils::Problem> get_problem_from_test_server(uint id)
+boost::optional<utils::Problem> get_problem_from_test_server(std::size_t id)
 {
     const auto idstr = std::to_string(id);
     const auto url = "http://procon2014-practice.oknct-ict.org/problem/ppm/" + idstr,
@@ -106,10 +108,10 @@ boost::optional<utils::Problem> get_problem_from_test_server(uint id)
 */
 bool send_result_to_test_server(int id, std::string const & username, std::string const & passwd, std::string const & answer)
 {
-    std::vector<std::array<std::string, 2>> args;
-    args.push_back({"username", username});
-    args.push_back({"passwd", passwd});
-    args.push_back({"answer_text", answer});
+    std::vector<std::array<std::string, 2>> args(3);
+    args[0][0] = "username";        args[0][1] = username;
+    args[1][0] = "passwd";          args[1][1] = passwd;
+    args[2][0] = "answer_text";     args[2][1] = answer;
 
     return curl_post("http://procon2014-practice.oknct-ict.org/solve/" + std::to_string(id), args);
 }
@@ -136,10 +138,10 @@ SendStatus send_result(std::string const & server_address,
     for(auto const & e: answer)
         ans += e + "\r\n";
 
-    std::vector<std::array<std::string, 2>> args;
-    args.push_back({"playerid", team_token});
-    args.push_back({"problemid", problem_number});
-    args.push_back({"answer", ans});
+    std::vector<std::array<std::string, 2>> args(3);
+    args[0][0] = "playerid";        args[0][1] = team_token;
+    args[1][0] = "problemid";       args[1][1] = problem_number;
+    args[2][0] = "answer";          args[2][1] = ans;
 
     auto ret = curl_post(server_address, args);
 

@@ -35,7 +35,7 @@ auto vec_total(T const & vec, std::size_t size)
 */
 #ifdef NOT_SUPPORT_CONSTEXPR
 template <typename T, typename U>
-#elif
+#else
 template <typename T, typename U,
     PROCON_TEMPLATE_CONSTRAINTS(is_image<T>() && is_image<U>())>   // T, Uともに画像であるという制約
 #endif

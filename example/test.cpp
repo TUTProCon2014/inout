@@ -193,4 +193,6 @@ int main()
         cv::waitKey(0);
     }else
         std::cout << "fueee" << std::endl;
+
+    return 0;
 }

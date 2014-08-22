@@ -12,6 +12,7 @@
 #include "../../utils/include/constants.hpp"
 #include "../../utils/include/template.hpp"
 #include "../../utils/include/types.hpp"
+#include "../../utils/include/dwrite.hpp"
 
 using namespace procon::utils;
 using namespace procon::inout;
@@ -33,14 +34,16 @@ auto vec_total(T const & vec, std::size_t size)
 /**
 ある画像img1に対して、方角directionに画像img2がどの程度相関があるかを返します
 */
-#ifdef NOT_SUPPORT_CONSTEXPR
-template <typename T, typename U>
-#else
-template <typename T, typename U,
-    PROCON_TEMPLATE_CONSTRAINTS(is_image<T>() && is_image<U>())>   // T, Uともに画像であるという制約
+template <typename T, typename U
+#ifdef SUPPORT_TEMPLATE_CONSTRAINTS
+    , PROCON_TEMPLATE_CONSTRAINTS(is_image<T>() && is_image<U>())   // T, Uともに画像であるという制約
 #endif
+>
 double diff_connection(T const & img1, U const & img2, Direction direction)
 {
+	static_assert(is_image<T>(), "1st argument is not a image type value");
+	static_assert(is_image<U>(), "2nd argument is not a image type value");
+
     double sum = 0;
 
     if(img1.height() != img2.height() || img1.width() != img2.width())
@@ -90,16 +93,17 @@ double diff_connection(T const & img1, U const & img2, Direction direction)
 }
 
 
-#ifndef NOT_SUPPORT_CONSTEXPR
+#ifdef SUPPORT_TEMPLATE_CONSTRAINTS
 /// ditto
-template <typename T, typename U,
-    PROCON_TEMPLATE_CONSTRAINTS(!is_image<T>() || !is_image<U>())>
+template <typename T, typename U
+    ,   PROCON_TEMPLATE_CONSTRAINTS(!is_image<T>() || !is_image<U>())
+>
 double diff_connection(T const & img1, U const & img2, Direction direction)
 {
-    static_assert(is_image<T>(), "1st argument is not a image type value");
-    static_assert(is_image<U>(), "2nd argument is not a image type value");
+   static_assert(is_image<T>(), "1st argument is not a image type value");
+   static_assert(is_image<U>(), "2nd argument is not a image type value");
 
-    return 0;
+   return 0;
 }
 #endif
 
@@ -113,10 +117,10 @@ int main()
     static_assert(is_image<Problem&>(), "NG: Problem&");
     static_assert(is_image<Problem const &>(), "NG: Problem const &");
     static_assert(!is_image<Problem*>(), "NG: Problem* is not a member of image type");
-    static_assert(is_image<ElementImage>(), "NG: ElementImage");
-    static_assert(is_image<ElementImage&>(), "NG: ElementImage&");
-    static_assert(is_image<ElementImage const &>(), "NG: ElementImage const &");
-    static_assert(!is_image<ElementImage*>(), "NG: ElementImage* is not a member of image type");
+    static_assert(is_image<Image>(), "NG: Image");
+    static_assert(is_image<Image&>(), "NG: Image&");
+    static_assert(is_image<Image const &>(), "NG: Image const &");
+    static_assert(!is_image<Image*>(), "NG: ElementImage<Image>* is not a member of image type");
     static_assert(!is_image<int>(), "NG: int is not a member of image type");
     static_assert(!is_image<double>(), "NG:  double is not a member of image type");
     static_assert(!is_image<std::string>(), "NG:  double is not a member of image type");
@@ -129,14 +133,11 @@ int main()
     if(p_opt){
         const Problem& p = *p_opt;
 
-        std::cout << "div_x : " << p.div_x() << std::endl;
-        std::cout << "div_y : " << p.div_y() << std::endl;
-
-        std::cout << "change_cost : " << p.change_cost() << std::endl;
-        std::cout << "select_cost : " << p.select_cost() << std::endl;
-
-        std::cout << "max_select_times : " << p.max_select_times() << std::endl;
-
+        writeln(std::cout, "div_x : ", p.div_x());
+        writeln(std::cout, "div_y : ", p.div_y());
+        writeln(std::cout, "change_cost : ", p.change_cost());
+        writeln(std::cout, "select_cost : ", p.select_cost());
+        writeln(std::cout, "max_select_times : ", p.max_select_times());
 
         // 一番スミにある(0, 0)要素の4方向にどの画像がくっつくかを調べる
         for(int i = 0; i < 4; ++i){
@@ -151,7 +152,6 @@ int main()
                     double v = diff_connection(p.get_element(2, 1), p.get_element(r, c), static_cast<Direction>(i));
                     // auto vv = diff_connection(1, 1, static_cast<Direction>(i));  // NG
                     m = std::min(m, v);
-
                     if(m == v){
                         rm = r;
                         cm = c;

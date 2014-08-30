@@ -133,11 +133,11 @@ int main()
     if(p_opt){
         const Problem& p = *p_opt;
 
-        writeln(std::cout, "div_x : ", p.div_x());
-        writeln(std::cout, "div_y : ", p.div_y());
-        writeln(std::cout, "change_cost : ", p.change_cost());
-        writeln(std::cout, "select_cost : ", p.select_cost());
-        writeln(std::cout, "max_select_times : ", p.max_select_times());
+        writeln("div_x : ", p.div_x());
+        writeln("div_y : ", p.div_y());
+        writeln("change_cost : ", p.change_cost());
+        writeln("select_cost : ", p.select_cost());
+        writeln("max_select_times : ", p.max_select_times());
 
         // 一番スミにある(0, 0)要素の4方向にどの画像がくっつくかを調べる
         for(int i = 0; i < 4; ++i){

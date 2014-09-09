@@ -1,5 +1,6 @@
 #include "../include/inout.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <exception>
@@ -8,7 +9,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <limits>
 #include <type_traits>
-#include <boost/format.hpp>
 #include "../../utils/include/constants.hpp"
 #include "../../utils/include/template.hpp"
 #include "../../utils/include/types.hpp"
@@ -158,23 +158,23 @@ int main()
                     }
                 }
 
-            std::cout << boost::format("(%1%, %2%) ") % 2 % 1;
+            writef("(%, %)", 2, 1);
             switch(i){
                 case 0:
-                    std::cout << "R" ;
+                    write('R');
                     break;
                 case 1:
-                    std::cout << "U" ;
+                    write('U');
                     break;
                 case 2:
-                    std::cout << "L" ;
+                    write('L');
                     break;
                 case 3:
-                    std::cout << "D" ;
+                    write('D');
                     break;
             }
 
-            std::cout << boost::format("-> (%1%, %2%)") % rm % cm << std::endl;
+            writefln("-> (%, %)", rm, cm);
         }
 
         auto& src_img = p.cvMat();

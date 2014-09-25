@@ -41,8 +41,8 @@ template <typename T, typename U
 >
 double diff_connection(T const & img1, U const & img2, Direction direction)
 {
-	static_assert(is_image<T>(), "1st argument is not a image type value");
-	static_assert(is_image<U>(), "2nd argument is not a image type value");
+    static_assert(is_image<T>(), "1st argument is not a image type value");
+    static_assert(is_image<U>(), "2nd argument is not a image type value");
 
     double sum = 0;
 

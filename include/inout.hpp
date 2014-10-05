@@ -56,8 +56,7 @@ bool curl_post(std::string const & url, std::vector<std::array<std::string, 2>> 
     for(auto& s : args)
         command += " -d " + s[0] + "=" + url_encode(s[1]);
 
-    // std::cout << "post: " << command + " " + url << std::endl;
-    if(std::system((command + " " + url + (utils::buildTarget == utils::Target::Windows ? " > nul" : " > /dev/null")).c_str()) == 0)
+    if(std::system((command + " " + url).c_str()) == 0)
         return true;
     else
         return false;
@@ -143,7 +142,7 @@ SendStatus send_result(std::string const & server_address,
     args[1][0] = "problemid";       args[1][1] = problem_number;
     args[2][0] = "answer";          args[2][1] = ans;
 
-    auto ret = curl_post(server_address, args);
+    auto ret = curl_post("http://" + server_address + "/SubmitAnswer", args);
 
     if(ret)
         return SendStatus::success;
